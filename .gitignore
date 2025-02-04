@@ -2,6 +2,8 @@
 dist/
 exec/
 
+.svelte-kit/
+
 # Logs
 logs
 *.log
