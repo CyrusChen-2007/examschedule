@@ -4,7 +4,8 @@ Look up your test schedules and proctoring sessions without pain
 
 ## Usage
 
-Deployed on Netlify: <https://exam.plushugh.com/>
+Deployed on Netlify
+(Note: there might be errors occurs if not deployed on Netlify)
 
 ## Building from source
 
