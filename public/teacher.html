@@ -21,6 +21,8 @@
         body {
             font-family: sans-serif;
             font-size: 16px;
+            background-color: #fff4cc;
+            color: #2c2415;
         }
 
         .page {
@@ -41,6 +43,7 @@
             margin: 64px 0 10px;
             padding: 0;
             font-weight: 700;
+            color: #4a3b16;
         }
 
         small:first-of-type {
@@ -70,17 +73,6 @@
             }
         }
 
-        form#fk {
-            flex-direction: column;
-            max-width: 60ch;
-            margin: 10px 0 0 0;
-        }
-
-        form#fk > textarea {
-            width: 100%;
-
-            box-shadow: none;
-        }
 
         button,
         input {
@@ -92,10 +84,11 @@
             padding: 10px;
             font-size: 14px;
             line-height: 14px;
-            border: 2px solid #000;
-            box-shadow: 3px 2px 0 #000;
+            border: 2px solid #6b5a2a;
+            box-shadow: 3px 2px 0 #6b5a2a;
             transition: all 0.2s ease-in-out;
             width: 35ch;
+            background-color: #fffdf3;
         }
 
         button {
@@ -103,9 +96,9 @@
             font-size: 16px;
             line-height: 16px;
             color: black;
-            background-color: #cdfeff;
-            border: 2px solid #007779;
-            box-shadow: 3px 2px 0 #007779;
+            background-color: #fff8df;
+            border: 2px solid #b8871b;
+            box-shadow: 3px 2px 0 #b8871b;
             transition: all 0.2s ease-in-out;
             cursor: pointer;
         }
@@ -114,15 +107,15 @@
         textarea[type="text"]:hover,
         button:hover {
             outline: none;
-            border: 2px solid #00a4aa;
-            box-shadow: 4px 3px 0 #00a4aa;
+            border: 2px solid #d89b00;
+            box-shadow: 4px 3px 0 #d89b00;
         }
 
         input[type="text"]:active,
         textarea[type="text"]:active,
         button:active {
-            border: 2px solid #00a4aa;
-            box-shadow: 6px 4px 0 #00a4aa;
+            border: 2px solid #d89b00;
+            box-shadow: 6px 4px 0 #d89b00;
         }
 
         #schedule {
@@ -189,7 +182,7 @@
 
         span {
             font-weight: bold;
-            color: #00a4aa;
+            color: #b06b00;
         }
 
         .hidden {
@@ -256,14 +249,11 @@
         }
 
         .gh {
-            margin: 10px;
-            position: fixed;
-            top: 0;
-            right: 0;
-
-            padding: 6px;
-
+            margin: 0;
+            padding: 10px;
             border: 2px solid #000;
+            box-shadow: 3px 2px 0 #000;
+            background: #fff;
         }
 
         .gh > a {
@@ -405,21 +395,9 @@
 </head>
 
 <body>
-<div class="gh">
-    <a aria-label="Star plushugh/examschedule on GitHub" class="github-button"
-       href="https://github.com/plushugh/examschedule">
-        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <title>GitHub</title>
-            <path
-                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-        </svg>
-        <span>Star this project on GitHub</span></a>
-</div>
-
 <div class="page">
-    <h1>查找考试时刻表（监考版）</h1>
+    <h1>BRS考试时刻表查询系统（监考版）</h1>
     <small>已经更新2025-2026学年第1学期期末考试，请老师们查收</small>
-    <small>Data Last Updated Jan 17, 2026, 14:30:00 UTC+8</small>
     <small style="color: red;">本网站的永久链接是：https://brsexam.approacher.org/，若您目前在使用临时链接，请保存收藏以免丢失</small>
     <div style="width: 100%; display: flex; justify-content: center; margin: 10px 0 24px; gap: 10px; align-items: center; flex-wrap: wrap;">
         <button id="lang-toggle"
@@ -439,8 +417,7 @@
     <form>
         <input id="proctor-name" placeholder="请输入教师全名" type="text"/>
         <button type="submit">查找考试信息</button>
-        <button id="download-ics-zh" type="button" disabled title="请先查询考试信息">下载 Apple 日历 (.ics) - 中文</button>
-        <button id="download-ics-en" type="button" disabled title="Please search first">Download Apple Calendar (.ics) - English</button>
+    <button id="download-ics" type="button" disabled title="请先查询考试信息">下载 Apple 日历 (.ics)</button>
         <div class="show-group">
             <div class="checkbox-container">
                 <input id="checkbox-show" type="checkbox"/>
@@ -452,6 +429,18 @@
     <div id="schedule"></div>
 
     <div class="page-footer" id="page-footer">
+        <div class="gh footer-card" id="github">
+            <a aria-label="Star plushugh/examschedule on GitHub" class="github-button"
+               href="https://github.com/plushugh/examschedule">
+                <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <title>GitHub</title>
+                    <path
+                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                </svg>
+                <span>Star this project on GitHub</span>
+            </a>
+        </div>
+
         <div class="info footer-card" id="contrib">
             这是一个
             <a href="https://fsf.org">自由软件</a>
@@ -473,24 +462,20 @@
 
         <div class="fk footer-card" id="disclaimer">
             <input id="tog" type="checkbox"/>
-            <label for="tog" id="toglabel">反馈/免责声明 Feedback/Disclaimer</label>
+            <label for="tog" id="toglabel">反馈/免责声明</label>
             <div id="content">
                 <p id="disclaimer-text">
                     免责声明：本服务提供的考试信息仅供参考，不一定反映真实考试信息，具体请参照官方公布的考试信息。
-                    <br>
-                    Disclaimer: The exam information provided by this service is for reference only and does not necessarily
-                    reflect the actual exam information. Please refer to the official exam information for details.
                 </p>
-                <form id="fk" netlify netlify-honeypot="bot-field">
-                    <p class="hidden" id="fk-honeypot">
-                        <label>
-                            如果你是人类，请不要填写此框: If you are human, do not click this field: <input name="bot-field"/>
-                        </label>
-                    </p>
-                    <textarea name="fankui" placeholder="请输入反馈 Enter your feedback" resize="false" rows="10"
-                              type="text"></textarea>
-                    <button type="submit">提交反馈 Submit Feedback</button>
-                </form>
+
+                <p id="contact-notice">
+                    本版本增加了导入苹果日历的功能和中英文的切换，如果有任何的bug或是建议，请联系开发者。
+                </p>
+
+                <p id="contact-info">
+                    电子邮箱 Email: <a href="mailto:cyjcyjcccyj@gmail.com">cyjcyjcccyj@gmail.com</a><br>
+                    钉钉 Dingtalk: <span style="font-weight: 700; color: inherit;">cyruschen07</span>
+                </p>
             </div>
         </div>
     </div>
@@ -502,9 +487,8 @@
 
     const i18n = {
         zh: {
-            title: "查找考试时刻表（监考版）",
+            title: "BRS考试时刻表查询系统（监考版）",
             updated: "已经更新2025-2026学年第1学期期末考试，请老师们查收",
-            dataUpdated: "Data Last Updated Jan 17, 2026, 14:30:00 UTC+8",
             permLink: "本网站的永久链接是：https://brsexam.approacher.org/，若您目前在使用临时链接，请保存收藏以免丢失",
             notice1: "【注意！本次部分学科的考试将不会出现在本列表中】",
             notice2: "【请核对自己的课表，若发现未显示的科目，请联系学科老师确认时间和地点】",
@@ -514,8 +498,7 @@
             proctorPlaceholder: "请输入教师全名",
             submit: "查找考试信息",
             showStudents: "显示考试学生",
-            dlZh: "下载 Apple 日历 (.ics) - 中文",
-            dlEn: "下载 Apple 日历 (.ics) - English",
+            dlIcs: "下载 Apple 日历 (.ics)",
             dlNeedSearch: "请先查询考试信息",
             dlReady: "下载并导入到 Apple 日历",
             errNoData: "没有查找到考试信息",
@@ -535,14 +518,14 @@
             disclaimerLabel: "反馈/免责声明",
             disclaimerText:
                 "免责声明：本服务提供的考试信息仅供参考，不一定反映真实考试信息，具体请参照官方公布的考试信息。",
-            honeypotText: "如果你是人类，请不要填写此框:",
-            feedbackPlaceholder: "请输入反馈",
-            submitFeedback: "提交反馈",
+            contactNotice:
+                "本版本增加了导入苹果日历的功能和中英文的切换，如果有任何的bug或是建议，请联系开发者。",
+            contactEmailLabel: "电子邮箱 Email:",
+            contactDingtalkLabel: "钉钉 Dingtalk:",
         },
         en: {
-            title: "Proctoring Sessions Lookup",
+            title: "BRS Exam Schedule Lookup System (Proctor Edition)",
             updated: "Updated for 2025–2026 Semester 1 Final Exams",
-            dataUpdated: "Data Last Updated Jan 17, 2026, 14:30:00 UTC+8",
             permLink:
                 "Permanent link: https://brsexam.approacher.org/ (if you're using a temporary link, please bookmark it)",
             notice1: "[Notice] Some subjects may not be listed",
@@ -554,13 +537,12 @@
             proctorPlaceholder: "Enter full teacher name",
             submit: "Find Proctoring Sessions",
             showStudents: "Show students",
-            dlZh: "Download Apple Calendar (.ics) - 中文",
-            dlEn: "Download Apple Calendar (.ics) - English",
+            dlIcs: "Download Apple Calendar (.ics)",
             dlNeedSearch: "Please search first",
             dlReady: "Download and import into Apple Calendar",
             errNoData: "No proctoring session found",
             errFetch: "Unable to load proctoring sessions",
-            len: "Length: ",
+            len: "Duration: ",
             minutes: "minutes",
             students: "Students: ",
             total: "Total ",
@@ -575,9 +557,10 @@
             disclaimerLabel: "Feedback / Disclaimer",
             disclaimerText:
                 "Disclaimer: The exam information provided by this service is for reference only and does not necessarily reflect the actual exam information. Please refer to the official exam information for details.",
-            honeypotText: "If you are human, do not fill this field:",
-            feedbackPlaceholder: "Enter your feedback",
-            submitFeedback: "Submit Feedback",
+            contactNotice:
+                "This version adds Apple Calendar import and a Chinese/English language switch. If you notice any bugs or have suggestions, please contact the developer.",
+            contactEmailLabel: "Email:",
+            contactDingtalkLabel: "Dingtalk:",
         },
     };
 
@@ -592,10 +575,9 @@
 
         const smalls = document.querySelectorAll("small");
         if (smalls[0]) smalls[0].textContent = t("updated");
-        if (smalls[1]) smalls[1].textContent = t("dataUpdated");
-        if (smalls[2]) smalls[2].textContent = t("permLink");
-        if (smalls[3]) smalls[3].textContent = t("notice1");
-        if (smalls[4]) smalls[4].textContent = t("notice2");
+    if (smalls[1]) smalls[1].textContent = t("permLink");
+    if (smalls[2]) smalls[2].textContent = t("notice1");
+    if (smalls[3]) smalls[3].textContent = t("notice2");
 
         const namesHint = document.querySelector("#names-hint");
         if (namesHint) {
@@ -625,10 +607,8 @@
         const showLabel = document.querySelector("label[for='checkbox-show']");
         if (showLabel) showLabel.textContent = t("showStudents");
 
-        const dlZhBtn = document.querySelector("#download-ics-zh");
-        const dlEnBtn = document.querySelector("#download-ics-en");
-        if (dlZhBtn) dlZhBtn.textContent = t("dlZh");
-        if (dlEnBtn) dlEnBtn.textContent = t("dlEn");
+    const dlBtn = document.querySelector("#download-ics");
+    if (dlBtn) dlBtn.textContent = t("dlIcs");
 
         // Footer: contribution + disclaimer block
         const contrib = document.querySelector("#contrib");
@@ -646,19 +626,26 @@
             disclaimerText.textContent = t("disclaimerText");
         }
 
-        const honeypot = document.querySelector("#fk-honeypot label");
-        if (honeypot) {
-            const input = honeypot.querySelector("input");
-            honeypot.innerHTML = "";
-            honeypot.appendChild(document.createTextNode(t("honeypotText") + " "));
-            if (input) honeypot.appendChild(input);
+        const contactNotice = document.querySelector("#contact-notice");
+        if (contactNotice) {
+            contactNotice.textContent = t("contactNotice");
         }
 
-        const feedbackBox = document.querySelector('textarea[name="fankui"]');
-        if (feedbackBox) feedbackBox.placeholder = t("feedbackPlaceholder");
-
-        const feedbackBtn = document.querySelector('form#fk button[type="submit"]');
-        if (feedbackBtn) feedbackBtn.textContent = t("submitFeedback");
+        const contactInfo = document.querySelector("#contact-info");
+        if (contactInfo) {
+            const mailLink = contactInfo.querySelector('a[href^="mailto:"]');
+            const dingtalkSpan = contactInfo.querySelector("span");
+            contactInfo.innerHTML = "";
+            contactInfo.appendChild(document.createTextNode(t("contactEmailLabel") + " "));
+            if (mailLink) {
+                contactInfo.appendChild(mailLink);
+            }
+            contactInfo.appendChild(document.createElement("br"));
+            contactInfo.appendChild(document.createTextNode(t("contactDingtalkLabel") + " "));
+            if (dingtalkSpan) {
+                contactInfo.appendChild(dingtalkSpan);
+            }
+        }
     }
 
     const langToggleBtn = document.querySelector("#lang-toggle");
@@ -821,36 +808,59 @@
         return lines.map(foldIcsLine).join("\r\n") + "\r\n";
     }
 
-    function downloadTextFile(filename, content, mimeType) {
-        const blob = new Blob([content], { type: mimeType || "text/plain;charset=utf-8" });
+    async function exportIcsToDevice(filename, content) {
+        const mime = "text/calendar;charset=utf-8";
+        const blob = new Blob([content], { type: mime });
+        const file = new File([blob], filename, { type: mime });
+
+        // Best effort for iOS: Share sheet lets users pick “Calendar” directly.
+        try {
+            if (
+                navigator.share &&
+                navigator.canShare &&
+                navigator.canShare({ files: [file] })
+            ) {
+                await navigator.share({
+                    files: [file],
+                    title: filename,
+                    text: filename,
+                });
+                return;
+            }
+        } catch (e) {
+            // User canceled share or share failed; fall back to download/open.
+        }
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
         a.download = filename;
+        a.rel = "noopener";
+
         document.body.appendChild(a);
         a.click();
         a.remove();
-        URL.revokeObjectURL(url);
+
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 10_000);
     }
 
     let showCheck = false;
     let lastProctorName = "";
     let lastProctorSessions = null;
 
-    const downloadIcsZhBtn = document.querySelector("#download-ics-zh");
-    const downloadIcsEnBtn = document.querySelector("#download-ics-en");
+    const downloadIcsBtn = document.querySelector("#download-ics");
 
     const showCheckbox = document.querySelector("#checkbox-show");
     const showCheckboxIndicator = document.querySelector(
         "#checkbox-show-indicator",
     );
 
-        function setDownloadEnabled(enabled) {
-                downloadIcsZhBtn.disabled = !enabled;
-                downloadIcsEnBtn.disabled = !enabled;
-                downloadIcsZhBtn.title = enabled ? t("dlReady") : t("dlNeedSearch");
-                downloadIcsEnBtn.title = enabled ? t("dlReady") : t("dlNeedSearch");
-        }
+    function setDownloadEnabled(enabled) {
+        downloadIcsBtn.disabled = !enabled;
+        downloadIcsBtn.title = enabled ? t("dlReady") : t("dlNeedSearch");
+    }
 
         function renderSchedule(proctorName, testSessions) {
                 const schedule = document.querySelector("#schedule");
@@ -944,11 +954,13 @@
 
                 const safe = safeUid(lastProctorName) || "proctor";
                 const suffix = locale === "en" ? "en" : "zh";
-                downloadTextFile(`${safe}-proctor-${suffix}.ics`, ics, "text/calendar;charset=utf-8");
+                exportIcsToDevice(`${safe}-proctor-${suffix}.ics`, ics);
             }
 
-            downloadIcsZhBtn.addEventListener("click", () => doDownload("zh"));
-            downloadIcsEnBtn.addEventListener("click", () => doDownload("en"));
+            // Single button: export language follows UI language.
+            downloadIcsBtn.addEventListener("click", () => {
+                doDownload(lang === "en" ? "en" : "zh");
+            });
 
             applyLanguage();
             setDownloadEnabled(false);
