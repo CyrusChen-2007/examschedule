@@ -1,5 +1,5 @@
 {
-  "version": "2",
+  "version": "5",
   "remote": {
     "https://deno.land/std@0.192.0/_util/asserts.ts": "178dfc49a464aee693a7e285567b3d0b555dc805ff490505a8aae34f9cfb1462",
     "https://deno.land/std@0.192.0/bytes/bytes_list.ts": "31d664f4d42fa922066405d0e421c56da89d751886ee77bbe25a88bf0310c9d0",
@@ -12,5 +12,12 @@
     "https://deno.land/std@0.192.0/streams/_common.ts": "f45cba84f0d813de3326466095539602364a9ba521f804cc758f7a475cda692d",
     "https://deno.land/std@0.192.0/streams/delimiter_stream.ts": "f69e849b3d1f59f02424497273f411105a6f76a9f13da92aeeb9a2d554236814",
     "https://deno.land/std@0.192.0/streams/text_delimiter_stream.ts": "20e680ab8b751390e359288ce764f9c47d164af11a263870746eeca4bc7d976b"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:deno@^2.6.5"
+      ]
+    }
   }
 }
