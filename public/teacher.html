@@ -428,6 +428,8 @@
 <form>
     <input id="proctor-name" placeholder="请输入教师全名 Please enter full name" type="text"/>
     <button type="submit">查找考试信息 Find Test Sessions</button>
+    <button id="download-ics-zh" type="button" disabled title="请先查询考试信息">下载 Apple 日历 (.ics) - 中文</button>
+    <button id="download-ics-en" type="button" disabled title="Please search first">Download Apple Calendar (.ics) - English</button>
     <div class="show-group">
         <div class="checkbox-container">
             <input id="checkbox-show" type="checkbox"/>
@@ -478,7 +480,172 @@
     </div>
 </div>
 <script>
+    // ---- iCalendar (.ics) helpers (Apple Calendar compatible) ----
+    function pad2(n) {
+        const s = String(n);
+        return s.length >= 2 ? s : `0${s}`;
+    }
+
+    function icsEscapeText(value) {
+        return String(value)
+            .replace(/\\/g, "\\\\")
+            .replace(/\r\n|\n|\r/g, "\\n")
+            .replace(/;/g, "\\;")
+            .replace(/,/g, "\\,");
+    }
+
+    function foldIcsLine(line) {
+        const limit = 75;
+        if (line.length <= limit) return line;
+        let out = "";
+        for (let i = 0; i < line.length; i += limit) {
+            const chunk = line.slice(i, i + limit);
+            out += i === 0 ? chunk : `\r\n ${chunk}`;
+        }
+        return out;
+    }
+
+    function normalizeDate(examDate) {
+        const parts = String(examDate).trim().split(/[./-]/).filter(Boolean);
+        if (parts.length < 3) throw new Error(`Unrecognized examDate format: ${examDate}`);
+        return {
+            year: Number(parts[0]),
+            month: Number(parts[1]),
+            day: Number(parts[2]),
+        };
+    }
+
+    function parseExamTime(examTime) {
+        const cleaned = String(examTime).trim();
+        const [rawStart, rawEnd] = cleaned.split("-").map((s) => s.trim());
+        if (!rawStart || !rawEnd) throw new Error(`Unrecognized examTime format: ${examTime}`);
+
+        const parseOne = (t) => {
+            if (t.includes(":")) {
+                const [hh, mm] = t.split(":");
+                return { h: Number(hh), m: Number(mm) };
+            }
+            const digits = t.replace(/[^0-9]/g, "");
+            const h = digits.length === 3 ? Number(digits.slice(0, 1)) : Number(digits.slice(0, 2));
+            const m = Number(digits.slice(-2));
+            return { h, m };
+        };
+
+        const s = parseOne(rawStart);
+        const e = parseOne(rawEnd);
+        return { startHour: s.h, startMin: s.m, endHour: e.h, endMin: e.m };
+    }
+
+    function formatLocalDateTime(y, mo, d, h, mi) {
+        return `${y}${pad2(mo)}${pad2(d)}T${pad2(h)}${pad2(mi)}00`;
+    }
+
+    function safeUid(input) {
+        return String(input)
+            .trim()
+            .replace(/\s+/g, "-")
+            .replace(/[^A-Za-z0-9._-]/g, "-")
+            .replace(/-+/g, "-")
+            .replace(/^-|-$/g, "");
+    }
+
+    function generateIcsForSessions(ownerName, sessions, opts) {
+        const timezone = (opts && opts.timezone) || "Asia/Shanghai";
+        const calendarName = (opts && opts.calendarName) || `proctor: ${ownerName}`;
+        const uidNamespace = (opts && opts.uidNamespace) || "exam.plushugh.com";
+        const locale = (opts && opts.locale) || "zh"; // zh | en
+
+        const now = new Date();
+        const dtstamp = `${now.getUTCFullYear()}${pad2(now.getUTCMonth() + 1)}${pad2(now.getUTCDate())}T${pad2(
+            now.getUTCHours(),
+        )}${pad2(now.getUTCMinutes())}${pad2(now.getUTCSeconds())}Z`;
+
+        const lines = [];
+        lines.push("BEGIN:VCALENDAR");
+        lines.push("VERSION:2.0");
+        lines.push("PRODID:-//examschedule//ics export//EN");
+        lines.push("CALSCALE:GREGORIAN");
+        lines.push("METHOD:PUBLISH");
+        lines.push(`X-WR-CALNAME:${icsEscapeText(calendarName)}`);
+        lines.push(`X-WR-TIMEZONE:${icsEscapeText(timezone)}`);
+
+        const sorted = [...sessions].sort((a, b) => {
+            const ak = `${a.examDate} ${a.examTime} ${a.subject}`;
+            const bk = `${b.examDate} ${b.examTime} ${b.subject}`;
+            return ak.localeCompare(bk, "zh");
+        });
+
+        for (const s of sorted) {
+            const { year, month, day } = normalizeDate(s.examDate);
+            const { startHour, startMin, endHour, endMin } = parseExamTime(s.examTime);
+            const dtStart = formatLocalDateTime(year, month, day, startHour, startMin);
+            const dtEnd = formatLocalDateTime(year, month, day, endHour, endMin);
+
+            const proctors = [s.proctor1, s.proctor2].filter(Boolean).join(" / ");
+
+            // Language toggles: subject stays as-is, but labels change.
+            const summary =
+                locale === "en"
+                    ? `Proctor: ${s.subject} (${s.grade}${s.classNum})`
+                    : `监考: ${s.subject} (${s.grade}${s.classNum})`;
+
+            const descriptionParts = [];
+            if (locale === "en") {
+                descriptionParts.push(`Proctor: ${ownerName}`);
+                descriptionParts.push(`Time: ${s.examDate} ${s.examTime}`);
+                descriptionParts.push(`Duration: ${s.minutes} minutes`);
+                descriptionParts.push(`Proctored by: ${proctors}`);
+                descriptionParts.push(`Students: ${s.numOfStudents}`);
+                // Always include roster for proctor exports
+                descriptionParts.push(`Roster: ${(s.students || []).join(", ")}`);
+            } else {
+                descriptionParts.push(`监考老师: ${ownerName}`);
+                descriptionParts.push(`时间: ${s.examDate} ${s.examTime}`);
+                descriptionParts.push(`时长: ${s.minutes} 分钟`);
+                descriptionParts.push(`监考: ${proctors}`);
+                descriptionParts.push(`学生人数: ${s.numOfStudents}`);
+                // Always include roster for proctor exports
+                descriptionParts.push(`学生名单: ${(s.students || []).join(", ")}`);
+            }
+            const description = descriptionParts.join("\n");
+
+            const uid = `${safeUid(ownerName)}-${safeUid(s.examDate)}-${safeUid(s.examTime)}-${safeUid(
+                s.subject,
+            )}@${safeUid(uidNamespace)}`;
+
+            lines.push("BEGIN:VEVENT");
+            lines.push(`UID:${icsEscapeText(uid)}`);
+            lines.push(`DTSTAMP:${dtstamp}`);
+            lines.push(`DTSTART;TZID=${icsEscapeText(timezone)}:${dtStart}`);
+            lines.push(`DTEND;TZID=${icsEscapeText(timezone)}:${dtEnd}`);
+            lines.push(`SUMMARY:${icsEscapeText(summary)}`);
+            lines.push(`LOCATION:${icsEscapeText(s.location)}`);
+            lines.push(`DESCRIPTION:${icsEscapeText(description)}`);
+            lines.push("END:VEVENT");
+        }
+
+        lines.push("END:VCALENDAR");
+        return lines.map(foldIcsLine).join("\r\n") + "\r\n";
+    }
+
+    function downloadTextFile(filename, content, mimeType) {
+        const blob = new Blob([content], { type: mimeType || "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    }
+
     let showCheck = false;
+    let lastProctorName = "";
+    let lastProctorSessions = null;
+
+    const downloadIcsZhBtn = document.querySelector("#download-ics-zh");
+    const downloadIcsEnBtn = document.querySelector("#download-ics-en");
 
     const showCheckbox = document.querySelector("#checkbox-show");
     const showCheckboxIndicator = document.querySelector(
@@ -518,6 +685,15 @@
 
                 const testSessions = testSessionsByProctor[proctorName];
 
+                // update export state
+                lastProctorName = proctorName;
+                lastProctorSessions = testSessions || null;
+                const enabled = Boolean(testSessions);
+                downloadIcsZhBtn.disabled = !enabled;
+                downloadIcsEnBtn.disabled = !enabled;
+                downloadIcsZhBtn.title = enabled ? "下载并导入到 Apple 日历" : "请先查询考试信息";
+                downloadIcsEnBtn.title = enabled ? "Download and import into Apple Calendar" : "Please search first";
+
                 if (testSessions) {
                     for (const session of testSessions) {
                         const dateTime = `${session["examDate"]} ${session.examTime}`;
@@ -555,6 +731,23 @@
                     schedule.innerHTML = '<p class="err">没有查找到考试信息<br>No test session found</p>';
                 }
             });
+
+            function doDownload(locale) {
+                if (!lastProctorSessions || !lastProctorName) return;
+                const ics = generateIcsForSessions(lastProctorName, lastProctorSessions, {
+                    calendarName: locale === "en" ? `proctor: ${lastProctorName}` : `监考: ${lastProctorName}`,
+                    timezone: "Asia/Shanghai",
+                    uidNamespace: "exam.plushugh.com",
+                    locale,
+                });
+
+                const safe = safeUid(lastProctorName) || "proctor";
+                const suffix = locale === "en" ? "en" : "zh";
+                downloadTextFile(`${safe}-proctor-${suffix}.ics`, ics, "text/calendar;charset=utf-8");
+            }
+
+            downloadIcsZhBtn.addEventListener("click", () => doDownload("zh"));
+            downloadIcsEnBtn.addEventListener("click", () => doDownload("en"));
         })
         .catch((err) => {
             document.querySelector("body").innerHTML =

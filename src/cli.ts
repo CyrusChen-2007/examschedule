@@ -1,4 +1,5 @@
 import { parse } from "https://deno.land/std@0.192.0/csv/mod.ts";
+import { generateIcsForSessions } from "./ics.ts";
 
 interface TestSession {
     examDate: string;
@@ -12,6 +13,36 @@ interface TestSession {
     proctor2: string | null;
     numOfStudents: string;
     students: string[];
+}
+
+export async function exportIcsFromJson(
+    sessionsByPersonJsonPath: string,
+    personName: string,
+    outputIcsPath: string,
+    calendarName: string,
+    includeRoster = false
+) {
+    const raw = await Deno.readTextFile(sessionsByPersonJsonPath);
+    const data = JSON.parse(raw) as Record<string, TestSession[]>;
+
+    const sessions = data[personName];
+    if (!sessions) {
+        const candidates = Object.keys(data).slice(0, 10).join(", ");
+        throw new Error(
+            `Name not found: ${personName}. (First few available names: ${candidates}${
+                Object.keys(data).length > 10 ? ", ..." : ""
+            })`
+        );
+    }
+
+    const ics = generateIcsForSessions(personName, sessions, {
+        calendarName,
+        timezone: "Asia/Shanghai",
+        uidNamespace: "exam.plushugh.com",
+        includeRoster,
+    });
+
+    await Deno.writeTextFile(outputIcsPath, ics);
 }
 
 export async function processFile(
@@ -136,6 +167,35 @@ export async function processFile(
 
 // Learn more at https://deno.land/manual/examples/module_metadata#concepts
 if (import.meta.main) {
+    // Two modes:
+    // 1) Generate JSON (existing behavior):
+    //    deno run --allow-read --allow-write src/cli.ts input.csv public/testSessionsByStudent.json public/studentNamesList.txt public/testSessionsByProctor.json public/proctorNamesList.txt
+    // 2) Export iCalendar (.ics) for Apple Calendar import:
+    //    deno run --allow-read --allow-write src/cli.ts export-ics student public/testSessionsByStudent.json "Student Name" public/student.ics
+    //    deno run --allow-read --allow-write src/cli.ts export-ics proctor public/testSessionsByProctor.json "Proctor Name" public/proctor.ics
+
+    const mode = Deno.args[0];
+
+    if (mode === "export-ics") {
+        const kind = Deno.args[1]; // student | proctor (only used in title)
+        const sessionsJsonPath = Deno.args[2];
+        const personName = Deno.args[3];
+        const outputIcsPath = Deno.args[4];
+        const includeRoster = Deno.args.includes("--include-roster");
+
+        if (!sessionsJsonPath || !personName || !outputIcsPath) {
+            console.error(
+                "Usage: deno run --allow-read --allow-write src/cli.ts export-ics <student|proctor> <sessions.json> <name> <output.ics> [--include-roster]"
+            );
+            Deno.exit(1);
+        }
+
+        const calendarName = `${kind ?? "exam"}: ${personName}`;
+        await exportIcsFromJson(sessionsJsonPath, personName, outputIcsPath, calendarName, includeRoster);
+        console.log(`Wrote ${outputIcsPath}`);
+        Deno.exit(0);
+    }
+
     const inputFilename = Deno.args[0];
     const outputFilename = Deno.args[1];
     const studentNamesListOutputFilename = Deno.args[2];
@@ -144,7 +204,7 @@ if (import.meta.main) {
 
     if (!inputFilename || !outputFilename || !studentNamesListOutputFilename || !outputFilenameProctor || !proctorNamesListOutputFilename) {
         console.error(
-            "Please provide an input and output filenames. Example: deno run --allow-read --allow-write src/cli.ts input.csv public/testSessionsByStudent.json public/studentNamesList.txt public/testSessionsByProctor.json public/proctorNamesList.txt"
+            "Please provide an input and output filenames. Example: deno run --allow-read --allow-write src/cli.ts input.csv public/testSessionsByStudent.json public/studentNamesList.txt public/testSessionsByProctor.json public/proctorNamesList.txt\n\nOr export an .ics file: deno run --allow-read --allow-write src/cli.ts export-ics student public/testSessionsByStudent.json \"Student Name\" public/student.ics"
         );
         Deno.exit(1);
     }

@@ -73,6 +73,32 @@ deno run --allow-read --allow-write src/cli.ts input.csv public/testSessionsBySt
 > as `testSessionsByStudent.json`, `testSessionsByProctor.json`, `proctorNamesList.txt` and
 > `studentNamesList.txt`
 
+#### Export Apple Calendar (.ics)
+
+Once you have the preindexed JSONs in `public/`, you can export a personal calendar file and import it into Apple Calendar.
+
+Export for a student:
+
+```bash
+deno run --allow-read --allow-write src/cli.ts export-ics student public/testSessionsByStudent.json "Student Name" public/student.ics
+```
+
+Export for a proctor:
+
+```bash
+deno run --allow-read --allow-write src/cli.ts export-ics proctor public/testSessionsByProctor.json "Proctor Name" public/proctor.ics
+```
+
+Then open the generated `.ics` file (Finder → double click) or import it in Calendar:
+
+- Calendar.app → File → Import… → choose the `.ics`
+
+Optional: include the full student roster in the event description (can be a lot of text):
+
+```bash
+deno run --allow-read --allow-write src/cli.ts export-ics proctor public/testSessionsByProctor.json "Proctor Name" public/proctor.ics --include-roster
+```
+
 #### Deploy webapp from `public/` directory
 
 Use netlify, since this app uses netlify forms for feedback form collection.
