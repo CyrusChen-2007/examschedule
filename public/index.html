@@ -22,6 +22,18 @@
             font-size: 16px;
         }
 
+        .page {
+            width: min(130ch, 100%);
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        @media (min-width: 900px) {
+            .page {
+                padding: 24px;
+            }
+        }
+
         h1 {
             text-align: center;
             font-size: 32px;
@@ -115,9 +127,8 @@
             display: grid;
             gap: 10px;
             grid-template-columns: repeat(auto-fit, minmax(min(90vw, 400px), 1fr));
-            width: 90%;
-            max-width: 130ch;
-            margin: 64px auto 200px;
+            width: 100%;
+            margin: 64px auto 48px;
         }
 
         .test-session {
@@ -186,19 +197,14 @@
         }
 
         .fk {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            margin: 10px;
+            margin: 0;
             background-color: #fff;
             border: 2px solid #000;
             box-shadow: 3px 2px 0 #000;
             transition: all 0.2s ease-in-out;
 
-            padding: 10px;
-            max-width: 45ch;
-
-            z-index: 100;
+            padding: 12px;
+            max-width: 70ch;
         }
 
         .fk:hover {
@@ -228,16 +234,11 @@
         }
 
         .info {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
             background-color: #fff;
             border: 2px solid #000;
             box-shadow: 3px 2px 0 #000;
             transition: all 0.2s ease-in-out;
-            padding: 10px;
-
-            z-index: 50;
+            padding: 12px;
         }
 
         .info:hover {
@@ -301,13 +302,15 @@
             box-shadow: 4px 3px 0 #000;
         }
 
-        @media (max-width: 600px) {
-            .info {
-                bottom: 66.5px;
-                left: 0;
-                margin: 10px;
-                right: unset;
-            }
+
+        .page-footer {
+            margin: 64px 0 24px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .page-footer .footer-card {
+            background: #fff;
         }
 
         input[type="checkbox"] {
@@ -419,28 +422,38 @@
         <span>Star this project on GitHub</span></a
     >
 </div>
-<h1>查找考试时刻表</h1>
-<small>已经更新2025-2026学年第1学期期末考试，请同学们查收</small>
-<small>Data Last Updated Jan 17, 2026, 14:30:00 UTC+8</small>
-<small style="color: red;">本网站的永久链接是：https://brsexam.approacher.org/，若您目前在使用临时链接，请保存收藏以免丢失</small>
-<small style="color: red;">【注意！本次部分学科的考试将不会出现在本列表中】</small>
-<small style="color: red;">【请核对自己的课表，若发现未显示的科目，请联系学科老师确认时间和地点】</small>
-<small
->如果查不到，请使用希悦档案的名字查询，并尝试自己名字+毕业学年（如张三-高中2026届），如果还是找不到，请以这个文件内的名字查询：<a
-        href="/studentNamesList.txt"
->studentNamesList.txt</a
-></small
->
-<p style="color: #007779; text-align: center">【新开放】教师监考查询：请访问<a href="/teacher.html">教师版</a><br>
-    [New Feature] Proctor Sessions Lookup: Please visit <a href="/teacher.html">Teacher Edition</a>
-</p>
-<form>
+
+<div class="page">
+    <h1>查找考试时刻表</h1>
+    <small>已经更新2025-2026学年第1学期期末考试，请同学们查收</small>
+    <small>Data Last Updated Jan 17, 2026, 14:30:00 UTC+8</small>
+    <small style="color: red;">本网站的永久链接是：https://brsexam.approacher.org/，若您目前在使用临时链接，请保存收藏以免丢失</small>
+    <div style="width: 100%; display: flex; justify-content: center; margin: 10px 0 24px; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <button id="lang-toggle"
+                type="button"
+                title="切换语言 / Switch language"
+                style="font-size: 22px; padding: 18px 26px; line-height: 22px;">
+            中文 / EN
+        </button>
+    </div>
+    <small style="color: red;">【注意！本次部分学科的考试将不会出现在本列表中】</small>
+    <small style="color: red;">【请核对自己的课表，若发现未显示的科目，请联系学科老师确认时间和地点】</small>
+    <small
+    >如果查不到，请使用希悦档案的名字查询，并尝试自己名字+毕业学年（如张三-高中2026届），如果还是找不到，请以这个文件内的名字查询：<a
+            href="/studentNamesList.txt"
+    >studentNamesList.txt</a
+    ></small>
+    <p id="teacher-link" style="color: #007779; text-align: center; margin: 0">
+        教师监考查询：请访问<a href="/teacher.html">教师版</a>
+    </p>
+    <form>
     <!--
     <label for="student-name">输入学生全名：</label>
     -->
     <input id="student-name" placeholder="请输入学生全名" type="text"/>
     <button type="submit">查找考试信息</button>
-    <button id="download-ics" type="button" disabled title="先查询考试信息后再下载">下载 Apple 日历 (.ics)</button>
+    <button id="download-ics-zh" type="button" disabled title="先查询考试信息后再下载">下载 Apple 日历 (.ics) - 中文</button>
+    <button id="download-ics-en" type="button" disabled title="Search first">Download Apple Calendar (.ics) - English</button>
     <div class="show-group">
         <div class="checkbox-container">
             <input id="checkbox-show" type="checkbox"/>
@@ -449,42 +462,232 @@
         <label for="checkbox-show">显示考试其他学生</label>
     </div>
 </form>
-<div id="schedule"></div>
-<div class="info">
-    这是一个
-    <a href="https://fsf.org">自由软件</a>
-    项目，由
-    <a href="https://github.com/plushugh/examschedule">@plushugh</a>
-    开发，
-    目前使用版本由
-    <a href="https://github.com/CyrusChen-2007/examschedule/">@CyrusChen-2007</a>
-    运营维护。
-</div>
-<div class="fk">
-    <input id="tog" type="checkbox"/>
-    <label for="tog" id="toglabel">反馈/免责声明</label>
-    <div id="content">
-        <p>
-            免责声明：本服务提供的考试信息仅供参考，不一定反映真实考试信息，具体请参照官方公布的考试信息。
-        </p>
-        <form id="fk" netlify netlify-honeypot="bot-field">
-            <p class="hidden">
-                <label>
-                    如果你是人类，请不要填写此框: <input name="bot-field"/>
-                </label>
-            </p>
-            <textarea
-                    name="fankui"
-                    placeholder="请输入反馈"
-                    resize="false"
-                    rows="10"
-                    type="text"
-            ></textarea>
-            <button type="submit">提交反馈</button>
-        </form>
+    <div id="schedule"></div>
+
+    <div class="page-footer" id="page-footer">
+        <div class="info footer-card" id="contrib">
+            这是一个
+            <a href="https://fsf.org">自由软件</a>
+            项目，由
+            <a href="https://github.com/plushugh/examschedule">@plushugh</a>
+            开发，
+            目前使用版本由
+            <a href="https://github.com/CyrusChen-2007/examschedule/">@CyrusChen-2007</a>
+            运营维护。
+        </div>
+
+        <div class="fk footer-card" id="disclaimer">
+            <input id="tog" type="checkbox"/>
+            <label for="tog" id="toglabel">反馈/免责声明</label>
+            <div id="content">
+                <p id="disclaimer-text">
+                    免责声明：本服务提供的考试信息仅供参考，不一定反映真实考试信息，具体请参照官方公布的考试信息。
+                </p>
+                <form id="fk" netlify netlify-honeypot="bot-field">
+                    <p class="hidden" id="fk-honeypot">
+                        <label>
+                            如果你是人类，请不要填写此框: <input name="bot-field"/>
+                        </label>
+                    </p>
+                    <textarea
+                            name="fankui"
+                            placeholder="请输入反馈"
+                            resize="false"
+                            rows="10"
+                            type="text"
+                    ></textarea>
+                    <button type="submit">提交反馈</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <script>
+    // ---- i18n (language switch) ----
+    const LANG_KEY = "examschedule.lang";
+    let lang = localStorage.getItem(LANG_KEY) || "zh"; // zh | en
+
+    const i18n = {
+        zh: {
+            title: "查找考试时刻表",
+            updated: "已经更新2025-2026学年第1学期期末考试，请同学们查收",
+            dataUpdated: "Data Last Updated Jan 17, 2026, 14:30:00 UTC+8",
+            permLink: "本网站的永久链接是：https://brsexam.approacher.org/，若您目前在使用临时链接，请保存收藏以免丢失",
+            notice1: "【注意！本次部分学科的考试将不会出现在本列表中】",
+            notice2: "【请核对自己的课表，若发现未显示的科目，请联系学科老师确认时间和地点】",
+            findHint:
+                "如果查不到，请使用希悦档案的名字查询，并尝试自己名字+毕业学年（如张三-高中2026届），如果还是找不到，请以这个文件内的名字查询：",
+            teacherLink: "教师监考查询：请访问",
+            teacherLinkLabel: "教师版",
+            studentPlaceholder: "请输入学生全名",
+            submit: "查找考试信息",
+            showOthers: "显示考试其他学生",
+            dlZh: "下载 Apple 日历 (.ics) - 中文",
+            dlEn: "下载 Apple 日历 (.ics) - English",
+            dlNeedSearch: "先查询考试信息后再下载",
+            dlReady: "下载并导入到 Apple 日历",
+            errNoData: "没有查找到考试信息",
+            errFetch: "无法获取考试信息",
+            len: "时长：",
+            minutes: "分钟",
+            students: "考试学生：",
+            total: "共计",
+            people: "人",
+            location: "考试地点：",
+            proctoredBy1: "由",
+            proctoredBy2: "和",
+            proctoredBy3: "监考",
+
+            // footer / disclaimer
+            contribHtml: `这是一个 <a href="https://fsf.org">自由软件</a> 项目，由 <a href="https://github.com/plushugh/examschedule">@plushugh</a> 开发，目前使用版本由 <a href="https://github.com/CyrusChen-2007/examschedule/">@CyrusChen-2007</a> 运营维护。`,
+            disclaimerLabel: "反馈/免责声明",
+            disclaimerText:
+                "免责声明：本服务提供的考试信息仅供参考，不一定反映真实考试信息，具体请参照官方公布的考试信息。",
+            honeypotText: "如果你是人类，请不要填写此框:",
+            feedbackPlaceholder: "请输入反馈",
+            submitFeedback: "提交反馈",
+        },
+        en: {
+            title: "Exam Schedule Lookup",
+            updated: "Updated for 2025–2026 Semester 1 Final Exams",
+            dataUpdated: "Data Last Updated Jan 17, 2026, 14:30:00 UTC+8",
+            permLink:
+                "Permanent link: https://brsexam.approacher.org/ (if you're using a temporary link, please bookmark it)",
+            notice1: "[Notice] Some subjects may not be listed",
+            notice2:
+                "[Notice] Please double-check your timetable; if any subjects are missing, contact your subject teacher",
+            findHint:
+                "If you can't find your schedule, try the name used in your student record system; you can also try adding your graduation year (e.g., ZhangSan-2026). Otherwise, search using the names in:",
+            teacherLink: "Proctor Sessions Lookup: please visit",
+            teacherLinkLabel: "Teacher Version",
+            studentPlaceholder: "Enter full student name",
+            submit: "Find Exam Sessions",
+            showOthers: "Show other students",
+            dlZh: "Download Apple Calendar (.ics) - 中文",
+            dlEn: "Download Apple Calendar (.ics) - English",
+            dlNeedSearch: "Search first",
+            dlReady: "Download and import into Apple Calendar",
+            errNoData: "No exam session found",
+            errFetch: "Unable to load exam sessions",
+            len: "Length: ",
+            minutes: "minutes",
+            students: "Students: ",
+            total: "Total ",
+            people: "",
+            location: "Location: ",
+            proctoredBy1: "Proctored by ",
+            proctoredBy2: " and ",
+            proctoredBy3: "",
+
+            // footer / disclaimer
+            contribHtml: `This is a <a href="https://fsf.org">Free Software</a> project, developed by <a href="https://github.com/plushugh/examschedule">@plushugh</a> on GitHub, currently maintained by <a href="https://github.com/CyrusChen-2007/examschedule/">@CyrusChen-2007</a>.`,
+            disclaimerLabel: "Feedback / Disclaimer",
+            disclaimerText:
+                "Disclaimer: The exam information provided by this service is for reference only and does not necessarily reflect the actual exam information. Please refer to the official exam information for details.",
+            honeypotText: "If you are human, do not fill this field:",
+            feedbackPlaceholder: "Enter your feedback",
+            submitFeedback: "Submit Feedback",
+        },
+    };
+
+    function t(key) {
+        return i18n[lang][key];
+    }
+
+    function setText(selector, text) {
+        const el = document.querySelector(selector);
+        if (el) el.textContent = text;
+    }
+
+    function applyLanguage() {
+        document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+        setText("h1", t("title"));
+
+        // The page has several <small> blocks; update them by their current order.
+        const smalls = document.querySelectorAll("small");
+        if (smalls[0]) smalls[0].textContent = t("updated");
+        if (smalls[1]) smalls[1].textContent = t("dataUpdated");
+        if (smalls[2]) smalls[2].textContent = t("permLink");
+        if (smalls[3]) smalls[3].textContent = t("notice1");
+        if (smalls[4]) smalls[4].textContent = t("notice2");
+        if (smalls[5]) {
+            // Keep the link, but localize the prefix text.
+            const link = smalls[5].querySelector("a");
+            const prefix = document.createTextNode(t("findHint"));
+            smalls[5].innerHTML = "";
+            smalls[5].appendChild(prefix);
+            smalls[5].appendChild(link);
+        }
+
+        const teacherLink = document.querySelector("#teacher-link");
+        if (teacherLink) {
+            const a = teacherLink.querySelector("a");
+            teacherLink.innerHTML = "";
+            teacherLink.appendChild(document.createTextNode(t("teacherLink") + " "));
+            if (a) {
+                a.textContent = t("teacherLinkLabel");
+                teacherLink.appendChild(a);
+            }
+        }
+
+        const studentInput = document.querySelector("#student-name");
+        if (studentInput) studentInput.placeholder = t("studentPlaceholder");
+
+        const submitBtn = document.querySelector("form button[type='submit']");
+        if (submitBtn) submitBtn.textContent = t("submit");
+
+        const showLabel = document.querySelector("label[for='checkbox-show']");
+        if (showLabel) showLabel.textContent = t("showOthers");
+
+        const dlZhBtn = document.querySelector("#download-ics-zh");
+        const dlEnBtn = document.querySelector("#download-ics-en");
+        if (dlZhBtn) dlZhBtn.textContent = t("dlZh");
+        if (dlEnBtn) dlEnBtn.textContent = t("dlEn");
+
+        // Footer: contribution + disclaimer block
+        const contrib = document.querySelector("#contrib");
+        if (contrib) {
+            contrib.innerHTML = t("contribHtml");
+        }
+
+        const togLabel = document.querySelector("#toglabel");
+        if (togLabel) {
+            togLabel.textContent = t("disclaimerLabel");
+        }
+
+        const disclaimerText = document.querySelector("#disclaimer-text");
+        if (disclaimerText) {
+            disclaimerText.textContent = t("disclaimerText");
+        }
+
+        const honeypot = document.querySelector("#fk-honeypot label");
+        if (honeypot) {
+            const input = honeypot.querySelector("input");
+            honeypot.innerHTML = "";
+            honeypot.appendChild(document.createTextNode(t("honeypotText") + " "));
+            if (input) honeypot.appendChild(input);
+        }
+
+        const feedbackBox = document.querySelector('textarea[name="fankui"]');
+        if (feedbackBox) feedbackBox.placeholder = t("feedbackPlaceholder");
+
+        const feedbackBtn = document.querySelector('form#fk button[type="submit"]');
+        if (feedbackBtn) feedbackBtn.textContent = t("submitFeedback");
+    }
+
+    const langToggleBtn = document.querySelector("#lang-toggle");
+    if (langToggleBtn) {
+        langToggleBtn.addEventListener("click", () => {
+            lang = lang === "zh" ? "en" : "zh";
+            localStorage.setItem(LANG_KEY, lang);
+            applyLanguage();
+            // re-render schedule in new language if we have it
+            if (lastStudentSessions && lastStudentName) {
+                renderSchedule(lastStudentName, lastStudentSessions);
+            }
+        });
+    }
+
     // ---- iCalendar (.ics) helpers (Apple Calendar compatible) ----
     function pad2(n) {
         const s = String(n);
@@ -559,6 +762,7 @@
         const calendarName = (opts && opts.calendarName) || `exam: ${ownerName}`;
         const uidNamespace = (opts && opts.uidNamespace) || "brsexam.approacher.org";
         const includeRoster = Boolean(opts && opts.includeRoster);
+        const locale = (opts && opts.locale) || "zh";
 
         const now = new Date();
         const dtstamp = `${now.getUTCFullYear()}${pad2(now.getUTCMonth() + 1)}${pad2(now.getUTCDate())}T${pad2(
@@ -586,18 +790,32 @@
             const dtStart = formatLocalDateTime(year, month, day, startHour, startMin);
             const dtEnd = formatLocalDateTime(year, month, day, endHour, endMin);
 
-            const summary = `${s.subject} (${s.grade}${s.classNum})`;
+            const summary =
+                locale === "en"
+                    ? `${s.subject} (${s.grade}${s.classNum})`
+                    : `${s.subject} (${s.grade}${s.classNum})`;
             const location = s.location;
             const proctors = [s.proctor1, s.proctor2].filter(Boolean).join(" / ");
 
             const descriptionParts = [];
-            descriptionParts.push(`考生: ${ownerName}`);
-            descriptionParts.push(`考试时间: ${s.examDate} ${s.examTime}`);
-            descriptionParts.push(`时长: ${s.minutes} 分钟`);
-            descriptionParts.push(`监考: ${proctors}`);
-            descriptionParts.push(`考生人数: ${s.numOfStudents}`);
-            if (includeRoster && s.students) {
-                descriptionParts.push(`考生名单: ${s.students.join(", ")}`);
+            if (locale === "en") {
+                descriptionParts.push(`Student: ${ownerName}`);
+                descriptionParts.push(`Time: ${s.examDate} ${s.examTime}`);
+                descriptionParts.push(`Duration: ${s.minutes} minutes`);
+                descriptionParts.push(`Proctor(s): ${proctors}`);
+                descriptionParts.push(`Students: ${s.numOfStudents}`);
+                if (includeRoster && s.students) {
+                    descriptionParts.push(`Roster: ${s.students.join(", ")}`);
+                }
+            } else {
+                descriptionParts.push(`考生: ${ownerName}`);
+                descriptionParts.push(`考试时间: ${s.examDate} ${s.examTime}`);
+                descriptionParts.push(`时长: ${s.minutes} 分钟`);
+                descriptionParts.push(`监考: ${proctors}`);
+                descriptionParts.push(`考生人数: ${s.numOfStudents}`);
+                if (includeRoster && s.students) {
+                    descriptionParts.push(`考生名单: ${s.students.join(", ")}`);
+                }
             }
             const description = descriptionParts.join("\n");
 
@@ -641,7 +859,59 @@
         "#checkbox-show-indicator",
     );
 
-    const downloadIcsBtn = document.querySelector("#download-ics");
+        const downloadIcsZhBtn = document.querySelector("#download-ics-zh");
+        const downloadIcsEnBtn = document.querySelector("#download-ics-en");
+
+        function setDownloadEnabled(enabled) {
+                downloadIcsZhBtn.disabled = !enabled;
+                downloadIcsEnBtn.disabled = !enabled;
+                downloadIcsZhBtn.title = enabled ? t("dlReady") : t("dlNeedSearch");
+                downloadIcsEnBtn.title = enabled ? t("dlReady") : t("dlNeedSearch");
+        }
+
+        function renderSchedule(studentName, testSessions) {
+                const schedule = document.querySelector("#schedule");
+                schedule.innerHTML = "";
+
+                if (!testSessions) {
+                        schedule.innerHTML = `<p class="err">${t("errNoData")}</p>`;
+                        return;
+                }
+
+                for (const session of testSessions) {
+                        const dateTime = `${session["examDate"]} ${session.examTime}`;
+                        schedule.innerHTML += `
+                            <div class="test-session">
+                                <div>
+                                    <div>
+                                        ${dateTime}<br><span>${t("len")}</span> ${session.minutes} <span>${t("minutes")}</span>
+                                    </div>
+                                    <div>${session.subject} ${session.grade} ${session.classNum}</div>
+                                </div>
+
+                                ${
+                                        showCheck
+                                                ? `<div>
+                                    <span>${t("students")}</span>${session.students && session.students.join(", ")}  <span>${t(
+                                                            "total",
+                                                    )}</span>${session.numOfStudents}<span>${t("people")}</span>
+                                </div>`
+                                                : ""
+                                }
+
+                                <div>
+                                    <span>${t("location")}</span>${session.location}
+                                </div>
+
+                                <div>
+                                    <span>${t("proctoredBy1")}</span>${session.proctor1}<span>${t("proctoredBy2")}</span>${
+                                            session.proctor2
+                                    }<span>${t("proctoredBy3")}</span>
+                                </div>
+                            </div>
+                        `;
+                }
+        }
 
     showCheckbox.addEventListener("change", () => {
         if (showCheckbox.checked) {
@@ -657,7 +927,6 @@
         .then((res) => res.json())
         .then((testSessionsByStudent) => {
             const form = document.querySelector("form");
-            const schedule = document.querySelector("#schedule");
 
             const studentNames = Object.keys(testSessionsByStudent);
             
@@ -670,8 +939,6 @@
             form.addEventListener("submit", (event) => {
                 event.preventDefault();
 
-                schedule.innerHTML = "";
-
                 const studentName = document.querySelector("#student-name").value;
 
                 const testSessions = testSessionsByStudent[studentName];
@@ -679,70 +946,35 @@
                 // update export state
                 lastStudentName = studentName;
                 lastStudentSessions = testSessions || null;
-                downloadIcsBtn.disabled = !Boolean(testSessions);
-                downloadIcsBtn.title = testSessions
-                    ? "下载并导入到 Apple 日历"
-                    : "先查询考试信息后再下载";
-
-                if (testSessions) {
-                    for (const session of testSessions) {
-                        const dateTime = `${session["examDate"]} ${session.examTime}`;
-                        schedule.innerHTML += `
-              <div class="test-session">
-                <div>
-                  <div>
-                    ${dateTime}<br><span>时长：</span> ${
-                            session.minutes
-                        } <span>分钟</span>
-                  </div>
-                  <div>${session.subject} ${session.grade} ${
-                            session.classNum
-                        }</div>
-                </div>
-
-                ${
-                            showCheck
-                                ? `<div>
-                  <span>考试学生：</span>${
-                                    session.students && session.students.join(", ")
-                                }  <span>共计</span>${session.numOfStudents}<span>人</span>
-                </div>`
-                                : ""
-                        }
-
-                <div>
-                  <span>考试地点：</span>${session.location}
-                </div>
-
-                <div>
-                  <span>由</span>${session.proctor1}<span>和</span>${
-                            session.proctor2
-                        }<span>监考</span>
-                </div>
-              </div>
-            `;
-                    }
-                } else {
-                    schedule.innerHTML = '<p class="err">没有查找到考试信息</p>';
-                }
+                setDownloadEnabled(Boolean(testSessions));
+                renderSchedule(studentName, testSessions);
             });
 
-            downloadIcsBtn.addEventListener("click", () => {
+            function doDownload(locale) {
                 if (!lastStudentSessions || !lastStudentName) return;
                 const ics = generateIcsForSessions(lastStudentName, lastStudentSessions, {
-                    calendarName: `student: ${lastStudentName}`,
+                    calendarName: locale === "en" ? `student: ${lastStudentName}` : `考生: ${lastStudentName}`,
                     timezone: "Asia/Shanghai",
                     uidNamespace: "brsexam.approacher.org",
                     includeRoster: showCheck,
+                    locale,
                 });
 
                 const safe = safeUid(lastStudentName) || "student";
-                downloadTextFile(`${safe}-exams.ics`, ics, "text/calendar;charset=utf-8");
-            });
+                const suffix = locale === "en" ? "en" : "zh";
+                downloadTextFile(`${safe}-exams-${suffix}.ics`, ics, "text/calendar;charset=utf-8");
+            }
+
+            downloadIcsZhBtn.addEventListener("click", () => doDownload("zh"));
+            downloadIcsEnBtn.addEventListener("click", () => doDownload("en"));
+
+            // Apply language after everything is wired
+            applyLanguage();
+            setDownloadEnabled(false);
         })
         .catch((err) => {
             document.querySelector("body").innerHTML =
-                '<p class="err">无法获取考试信息</p>';
+                `<p class="err">${t("errFetch")}</p>`;
         });
 </script>
 <script
